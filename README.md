@@ -13,7 +13,7 @@ Shallow water equations with IAP transformation;
 
 Time integrate scheme: Consisitent Dissipation Operator(CDO in B.f90),
 
-and the square conservative scheme with variable timestep;
+and the square conservative scheme with variable timestep(vary.f90);
 
 Antisymmetry Opterator(also the spatial discretization) in L.f90;
 
