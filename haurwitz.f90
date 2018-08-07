@@ -14,9 +14,9 @@ SUBROUTINE haurwitz
     
     implicit none
     
-    real*8,parameter       :: omg  = 7.848d-6		  ! angular velocity of RH wave
-    real*8,parameter       :: R    = 4d0              ! wave number of RH wave
-    real*8,parameter       :: h0   = 8000.d0          ! wave number of RH wave
+    real*8,parameter              :: omg  = 7.848d-6         ! angular velocity of RH wave
+    real*8,parameter              :: R    = 4d0              ! wave number of RH wave
+    real*8,parameter              :: h0   = 8000.d0          ! wave number of RH wave
     
     real*8,dimension(0:nx1,0:ny1) :: u1,u2,u3                ! working array
     real*8,dimension(0:nx1,0:ny1) :: AA1,Ac,A21,A22,A23,Ah   ! working array
@@ -24,7 +24,7 @@ SUBROUTINE haurwitz
     real*8,dimension(0:nx1,0:ny1) :: CC,CC1,CC2,Ch           ! working array
     real*8,dimension(0:nx1,0:ny1) :: coslat                  ! working array
     
-    integer                      ::   i,j                   ! working variable
+    integer                       :: i,j                     ! working variable
     
     coslat       = cos_lat
     coslat(:,1 ) = 0.d0

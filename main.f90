@@ -14,26 +14,35 @@ PROGRAM MAIN
 !
     implicit none
 !
-    real*8                       :: tener,tener0               ! total energy at tn and t_start, respectively
-    real*8                       :: tmass,tmass0               ! total mass at tn and t_start, respectively
+    real*8                             :: tener,tener0               ! total energy at tn and t_start, respectively
+    real*8                             :: tmass,tmass0               ! total mass at tn and t_start, respectively
                                                                
-	real*4, dimension(1:nx,1:ny) :: pu,pv,ph                   ! for output
+	real*4, dimension(:,:),allocatable :: pu,pv,ph                   ! for output
                                                                
-	real*8                       :: dt,dtn,t_now               ! working variables
-	integer                      :: i,j                        ! working variables
-                                                               
-	real*8, external             :: inner                      ! a external function to calculate inner product
-                                 
-    character*4                  :: output_row_length
-    logical                      :: do_output
-    integer                      :: output_num,output_idx
-    integer                      :: time_1,time_2
+	real*8                             :: dt,dtn,t_now               ! working variables
+	integer                            :: i,j                        ! working variables
+    integer                            :: pass_type
+                                                                     
+	real*8, external                   :: inner                      ! a external function to calculate inner product
+                                       
+    character*4                        :: output_row_length
+    logical                            :: do_output
+    integer                            :: output_num,output_idx
+    integer                            :: time_1,time_2
 
     call SYSTEM_CLOCK(time_1)
     
+    ! read namelist
+    call read_namelist
+    call preprocess_parameter
+    
+    ! initialize mesh and array
+    call init_mesh
+    call init_array
+    
     t_now = t_start
     
-    output_num = t_end/thalf+1
+    output_num = t_end/history_interval+1
     output_idx = 1
     
     print *,'Initial time is',t_now
@@ -64,6 +73,11 @@ PROGRAM MAIN
     h  = dsqrt(wh)
     wu = u*h
     wv = v*h
+    
+    ! allocate output arrary
+    allocate(pu(1:nx,1:ny),&
+             pv(1:nx,1:ny),&
+             ph(1:nx,1:ny))
     
     pu = u (1:nx,1:ny)
     pv = v (1:nx,1:ny)
@@ -110,13 +124,19 @@ PROGRAM MAIN
 !------------------------------------------------
 !       The time integration
 !------------------------------------------------
-        call vary(dt,dtn)
+    if(trim(adjustl(split_scheme))=='CSP2')then
+        call CSP2(dt,dtn)
+    else
+        pass_type = full_pass
+        call integrator(pass_type,dt,dtn)
+    endif
+            
         
         h = dsqrt(wh)
         u = wu/h
         v = wv/j
         
-        do_output=(t_now.ge.thalf).and.(mod(t_now,dble(thalf))==0)
+        do_output=(t_now.ge.history_interval).and.(mod(t_now,dble(history_interval))==0)
         if (do_output) then
             
             print *,    '-------------------------------------------------------------------------------'

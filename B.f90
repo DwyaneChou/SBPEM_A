@@ -1,17 +1,17 @@
-SUBROUTINE B_operator(wu,wv,wh,du,dv,dh,bu,bv,bh,dt)
+SUBROUTINE B_operator(pass_type,wu,wv,wh,du,dv,dh,bu,bv,bh,dt)
 !
 ! This subroutine is to calculate the tendency of geopotential height
 !
     use module_para,only : nx,nx1,ny,ny1
 !
  	implicit none
-!
+    integer                      ,intent(in )  :: pass_type
 	real*8,dimension(0:nx1,0:ny1),intent(in )  :: wu               ! wu = U = h*u
 	real*8,dimension(0:nx1,0:ny1),intent(in )  :: wv               ! wv = V = h*v 
 	real*8,dimension(0:nx1,0:ny1),intent(in )  :: wh               ! Geopotential height
-	real*8,dimension(0:nx1,0:ny1),intent(in )  :: du               ! Tendency of wu
-	real*8,dimension(0:nx1,0:ny1),intent(in )  :: dv               ! Tendency of wv
-	real*8,dimension(0:nx1,0:ny1),intent(in )  :: dh               ! Tendency of wh
+	real*8,dimension(0:nx1,0:ny1),intent(out)  :: du               ! Tendency of wu
+	real*8,dimension(0:nx1,0:ny1),intent(out)  :: dv               ! Tendency of wv
+	real*8,dimension(0:nx1,0:ny1),intent(out)  :: dh               ! Tendency of wh
 	real*8,dimension(0:nx1,0:ny1),intent(out)  :: bu               ! Dissipation of wu
 	real*8,dimension(0:nx1,0:ny1),intent(out)  :: bv               ! Dissipation of wv
 	real*8,dimension(0:nx1,0:ny1),intent(out)  :: bh               ! Dissipation od wh
@@ -26,11 +26,13 @@ SUBROUTINE B_operator(wu,wv,wh,du,dv,dh,bu,bv,bh,dt)
 	integer                                    :: i,j              ! working variables
     real*8,external                            :: inner
     
-    ! Antisymmetry Check
-	!print*,inner(wu,wv,wh,du,dv,dh)
-!
-!   To calculate the consisitent dissipation operator using the 4th-order Runge-Kutta scheme
-!
+
+
+    ! To calculate the consisitent dissipation operator using the 4th-order Runge-Kutta scheme
+
+    ! Antisymmetric spatial dsicrete operator
+    call spatial_discrete(pass_type,wu,wv,wh,du,dv,dh)
+    
     dt2 = dt*0.5d0
     
     do j=1,ny
@@ -41,8 +43,7 @@ SUBROUTINE B_operator(wu,wv,wh,du,dv,dh,bu,bv,bh,dt)
         enddo
     enddo
     
-	call L_operator(su,sv,sh,tu,tv,th)
-    !print*,inner(su,sv,sh,tu,tv,th)
+    call spatial_discrete(pass_type,su,sv,sh,tu,tv,th)
     
     do j=1,ny
         do i=1,nx
@@ -56,8 +57,7 @@ SUBROUTINE B_operator(wu,wv,wh,du,dv,dh,bu,bv,bh,dt)
         enddo
     enddo
     
-	call L_operator(su,sv,sh,tu,tv,th)
-    !print*,inner(su,sv,sh,tu,tv,th)
+    call spatial_discrete(pass_type,su,sv,sh,tu,tv,th)
     
     do j=1,ny
         do i=1,nx
@@ -71,8 +71,7 @@ SUBROUTINE B_operator(wu,wv,wh,du,dv,dh,bu,bv,bh,dt)
         enddo
     enddo
     
-	call L_operator(su,sv,sh,tu,tv,th)
-    !print*,inner(su,sv,sh,tu,tv,th)
+    call spatial_discrete(pass_type,su,sv,sh,tu,tv,th)
     
     do j=1,ny
         do i=1,nx

@@ -34,3 +34,8 @@ Zhou Lilong
 National Meteorological Center of CMA
 
 College of Earth and Planetary Sciences, UCAS
+
+# Update log
+V2.0
+1. Add split scheme CSP2(2nd Order Conservative Split Pattern)
+2. Add 4th order Improved Runge-Kutta and Predict-Correct as integrate scheme

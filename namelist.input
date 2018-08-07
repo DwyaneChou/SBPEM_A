@@ -1,0 +1,19 @@
+&time_settings
+time_step        = 150
+run_days         = 66
+run_hours        = 0
+run_minutes      = 0
+run_seconds      = 0
+history_interval = 3600
+/
+
+&mesh_settings
+zonal_resolution      = 2
+meridional_resolution = 2
+/
+
+&integral_settings
+integral_scheme = 'Predict_Correct' ! Choose from 'RK4', 'CDO' or 'Predict_Correct'
+split_scheme    = 'CSP2' ! Choose from 'CSP2' or ''
+split_step      = 3
+/
